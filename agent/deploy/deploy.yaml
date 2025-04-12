@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ado-agent
+  namespace: devops
+  labels:
+    app: ado-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ado-agent
+  template:
+    metadata:
+      labels:
+        app: ado-agent
+    spec:
+      containers:
+      - name: ado-agent
+        image: msyoz.azurecr.io/adoagent:ck4
+        imagePullPolicy: Always
+        env:
+        - name: AZP_URL
+          value: "https://zyg-demo.visualstudio.com/"
+        - name: AZP_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: ado-agent202504-secret
+              key: AZP_TOKEN
+        - name: AZP_POOL
+          value: "K8SPool"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1"
+        volumeMounts:
+        - name: ado-agent-work
+          mountPath: /azp/agent/_work
+      volumes:
+      - name: ado-agent-work
+        emptyDir: {}
