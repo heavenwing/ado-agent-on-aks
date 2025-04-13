@@ -21,7 +21,7 @@ spec:
         imagePullPolicy: Always
         env:
         - name: AZP_URL
-          value: "https://zyg-demo.visualstudio.com/"
+          value: "https://dev.azure.com/zyg-demo"
         - name: AZP_TOKEN
           valueFrom:
             secretKeyRef:
@@ -37,8 +37,13 @@ spec:
             memory: "1Gi"
             cpu: "1"
         volumeMounts:
+        - name: docker-volume
+          mountPath: /var/run/docker.sock
         - name: ado-agent-work
           mountPath: /azp/agent/_work
       volumes:
+      - name: docker-volume
+        hostPath:
+          path: /var/run/docker.sock
       - name: ado-agent-work
         emptyDir: {}
